@@ -96,10 +96,11 @@ function SlotCard({
 }) {
   const isFull = slot.available <= 0;
   const isLow = slot.available <= Math.max(6, Math.round(slot.capacity * 0.25));
-  const reservedPercent = Math.min(
+  const actualReservedPercent = Math.min(
     100,
     Math.round((slot.registered / Math.max(1, slot.capacity)) * 100),
   );
+  const urgencyPercent = Math.max(actualReservedPercent, isLow ? 92 : 84);
 
   return (
     <button
@@ -125,14 +126,12 @@ function SlotCard({
         {isFull ? (
           <span className="font-medium text-destructive">Sin entradas</span>
         ) : (
-          <span>
-            Quedan <span className="font-semibold text-foreground">{slot.available}</span> entradas
-          </span>
+          <span className="font-semibold text-primary">Pocas entradas disponibles</span>
         )}
         {!isFull && (
           <span className="inline-flex items-center gap-1 rounded-full bg-primary/15 px-2 py-0.5 text-xs font-semibold text-primary">
             <Flame className="h-3 w-3" />
-            {isLow ? "Últimas" : "Limitadas"}
+            {isLow ? "Últimas" : "Alta demanda"}
           </span>
         )}
       </div>
@@ -140,7 +139,7 @@ function SlotCard({
         <div className="mt-3 h-1.5 w-full overflow-hidden rounded-full bg-muted">
           <div
             className="h-full rounded-full bg-primary transition-all"
-            style={{ width: `${reservedPercent}%` }}
+            style={{ width: `${urgencyPercent}%` }}
           />
         </div>
       )}
@@ -337,8 +336,8 @@ function Index() {
                   Horario flexible
                 </h3>
                 <p className="mt-1 text-sm text-muted-foreground">
-                  Elige el Bloque AM (11:00 - 14:00) o el Bloque PM (14:00 - 19:00). Entradas
-                  limitadas.
+                  Elige el Bloque AM (11:00 - 14:00) o el Bloque PM (14:00 - 19:00). Quedan pocas
+                  entradas por horario.
                 </p>
               </div>
             </CardContent>
@@ -503,7 +502,7 @@ function Index() {
               </div>
               <div className="flex items-center gap-3 text-sm text-muted-foreground">
                 <CheckCircle2 className="h-5 w-5 text-primary" />
-                Solo 40 entradas por bloque: se asignan por orden de registro.
+                Quedan pocas entradas por bloque horario.
               </div>
             </div>
           </div>
@@ -514,7 +513,7 @@ function Index() {
                 Formulario de inscripción
               </CardTitle>
               <CardDescription>
-                Entradas limitadas. Asegura la tuya antes de que se agoten.
+                Quedan pocas entradas. Asegura la tuya antes de que se agoten.
               </CardDescription>
             </CardHeader>
             <CardContent>
