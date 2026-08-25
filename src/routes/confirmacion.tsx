@@ -46,7 +46,7 @@ function ConfirmationPage() {
   const selectedBlock = bloque?.trim() || "Bloque horario seleccionado";
 
   return (
-    <main className="min-h-screen bg-background font-sans">
+    <main className="min-h-screen overflow-x-hidden bg-background font-sans">
       <section className="relative overflow-hidden bg-ink text-paper">
         <div className="absolute inset-0">
           <img
@@ -61,14 +61,19 @@ function ConfirmationPage() {
         </div>
 
         <header className="absolute inset-x-0 top-0 z-20">
-          <div className="mx-auto flex w-full max-w-6xl items-center justify-between gap-4 px-6 py-5 md:px-8 md:py-6">
-            <Link to="/" aria-label="Puntacaribe inicio" className="inline-flex shrink-0">
+          <div className="mx-auto flex w-full max-w-6xl items-center justify-center gap-4 px-6 py-5 sm:justify-between md:px-8 md:py-6">
+            <Link
+              to="/"
+              aria-label="Puntacaribe inicio"
+              className="inline-flex shrink-0 justify-center"
+            >
               <img
                 src="/images/logo-white-punta.png"
                 alt="Puntacaribe"
                 width={842}
                 height={231}
-                className="h-10 w-auto md:h-14"
+                className="h-16 w-auto max-w-[76vw] object-contain drop-shadow-[0_3px_14px_rgba(0,0,0,0.45)] sm:h-16 md:h-20"
+                fetchPriority="high"
               />
             </Link>
             <Button
@@ -83,16 +88,17 @@ function ConfirmationPage() {
         </header>
 
         <div className="relative mx-auto w-full max-w-6xl px-6 pb-28 pt-20 md:px-8 md:pb-36 md:pt-28">
-          <div className="max-w-3xl">
+          <div className="min-w-0 max-w-[calc(100vw-3rem)] sm:max-w-3xl">
             <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-paper/20 bg-primary/20 px-4 py-2 text-sm font-medium text-primary-light backdrop-blur-sm">
               <BadgeCheck className="h-4 w-4 text-primary" />
               Entrada confirmada
             </div>
-            <h1 className="font-display text-5xl font-bold leading-[1.1] tracking-tight md:text-7xl">
-              Tu entrada al evento
+            <h1 className="font-display text-4xl font-bold leading-[1.1] tracking-tight sm:text-5xl md:text-7xl">
+              Tu entrada al
+              <span className="block">evento</span>
               <span className="block text-primary">está reservada</span>
             </h1>
-            <p className="mt-6 max-w-2xl text-lg leading-relaxed text-paper/80 md:text-xl">
+            <p className="mt-6 max-w-2xl break-words text-lg leading-relaxed text-paper/80 md:text-xl">
               Ya tienes acceso al Travel Sale Puntacaribe, un evento presencial con atención
               personalizada, precios exclusivos y beneficios para quienes asisten.
             </p>
@@ -100,15 +106,15 @@ function ConfirmationPage() {
         </div>
       </section>
 
-      <section className="relative z-10 mx-auto -mt-16 max-w-6xl px-6 pb-20 md:px-8">
-        <div className="grid gap-6 lg:grid-cols-[minmax(0,1.1fr)_minmax(320px,0.9fr)]">
-          <div className="rounded-xl border border-border bg-card p-6 shadow-xl md:p-8">
+      <section className="relative z-10 mx-auto -mt-16 w-full max-w-6xl px-6 pb-20 md:px-8">
+        <div className="grid min-w-0 gap-6 lg:grid-cols-[minmax(0,1.1fr)_minmax(320px,0.9fr)]">
+          <div className="min-w-0 max-w-[calc(100vw-3rem)] rounded-xl border border-border bg-card p-6 shadow-xl md:max-w-none md:p-8">
             <div className="flex flex-col gap-6 md:flex-row md:items-start md:justify-between">
-              <div>
-                <p className="text-xs font-semibold uppercase tracking-[0.3em] text-primary">
+              <div className="min-w-0">
+                <p className="text-xs font-semibold uppercase tracking-[0.2em] text-primary sm:tracking-[0.3em]">
                   Travel Sale Puntacaribe
                 </p>
-                <h2 className="mt-3 font-display text-3xl font-bold tracking-tight text-foreground md:text-4xl">
+                <h2 className="mt-3 font-display text-2xl font-bold tracking-tight text-foreground sm:text-3xl md:text-4xl">
                   Entrada presencial gratuita
                 </h2>
                 <p className="mt-3 max-w-xl text-muted-foreground">
@@ -153,11 +159,11 @@ function ConfirmationPage() {
               </div>
             </div>
 
-            <div className="mt-8 flex flex-wrap gap-3">
+            <div className="mt-8 grid gap-3 sm:flex sm:flex-wrap">
               <Button
                 asChild
                 size="lg"
-                className="bg-primary text-primary-foreground hover:bg-primary/90"
+                className="w-full bg-primary text-primary-foreground hover:bg-primary/90 sm:w-auto"
               >
                 <a
                   href="https://www.google.com/maps/search/?api=1&query=Ola%20Hotel%20Av.%20Providencia%20307%20Santiago"
@@ -168,7 +174,7 @@ function ConfirmationPage() {
                   Abrir ubicación
                 </a>
               </Button>
-              <Button asChild size="lg" variant="outline">
+              <Button asChild size="lg" variant="outline" className="w-full sm:w-auto">
                 <Link to="/">
                   <ArrowLeft className="h-4 w-4" />
                   Volver al inicio
@@ -177,7 +183,7 @@ function ConfirmationPage() {
             </div>
           </div>
 
-          <div className="rounded-xl border border-border bg-card p-6 shadow-xl md:p-8">
+          <div className="min-w-0 max-w-[calc(100vw-3rem)] rounded-xl border border-border bg-card p-6 shadow-xl md:max-w-none md:p-8">
             <h2 className="font-display text-2xl font-bold text-foreground">
               Te esperamos presencialmente
             </h2>

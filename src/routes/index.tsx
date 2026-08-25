@@ -203,7 +203,7 @@ function Index() {
   };
 
   return (
-    <div className="min-h-screen bg-background font-sans">
+    <div className="min-h-screen overflow-x-hidden bg-background font-sans">
       {/* Hero */}
       <section className="relative flex min-h-[80vh] flex-col justify-center overflow-hidden bg-ink text-paper">
         <div className="absolute inset-0">
@@ -219,14 +219,19 @@ function Index() {
         </div>
 
         <header className="absolute inset-x-0 top-0 z-20">
-          <div className="mx-auto flex w-full max-w-6xl items-center justify-between gap-4 px-6 py-5 md:px-8 md:py-6">
-            <Link to="/" aria-label="Puntacaribe inicio" className="inline-flex shrink-0">
+          <div className="mx-auto flex w-full max-w-6xl items-center justify-center gap-4 px-6 py-5 sm:justify-between md:px-8 md:py-6">
+            <Link
+              to="/"
+              aria-label="Puntacaribe inicio"
+              className="inline-flex shrink-0 justify-center"
+            >
               <img
                 src="/images/logo-white-punta.png"
                 alt="Puntacaribe"
                 width={842}
                 height={231}
-                className="h-10 w-auto md:h-14"
+                className="h-16 w-auto max-w-[76vw] object-contain drop-shadow-[0_3px_14px_rgba(0,0,0,0.45)] sm:h-16 md:h-20"
+                fetchPriority="high"
               />
             </Link>
             <Button
@@ -242,7 +247,7 @@ function Index() {
         </header>
 
         <div className="relative mx-auto w-full max-w-6xl px-6 py-24 md:px-8">
-          <div className="max-w-3xl">
+          <div className="max-w-[calc(100vw-3rem)] sm:max-w-3xl">
             <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-paper/20 bg-primary/20 px-4 py-2 text-sm font-medium text-primary-light backdrop-blur-sm">
               <Tag className="h-4 w-4 text-primary" />
               Evento exclusivo presencial
@@ -251,31 +256,31 @@ function Index() {
               Travel Sale
               <span className="block text-primary">Puntacaribe</span>
             </h1>
-            <p className="mt-6 max-w-xl text-lg leading-relaxed text-paper/80 md:text-xl">
+            <p className="mt-6 max-w-full text-lg leading-relaxed text-paper/80 sm:max-w-xl md:text-xl">
               Sábado 29 de agosto en Ola Hotel, Av. Providencia 307. Programas todo incluido,
               cruceros, Brasil y Europa: en Puntacaribe gestionamos absolutamente todo por ti.
               Reserva tu entrada al evento y descubre precios exclusivos.
             </p>
 
-            <div className="mt-10 flex flex-wrap gap-4 text-paper/90">
-              <div className="flex items-center gap-2 rounded-lg border border-paper/10 bg-paper/10 px-4 py-2 backdrop-blur-sm">
+            <div className="mt-10 grid gap-4 text-paper/90 sm:flex sm:flex-wrap">
+              <div className="flex w-full max-w-full items-center gap-2 rounded-lg border border-paper/10 bg-paper/10 px-4 py-2 backdrop-blur-sm sm:w-auto">
                 <Calendar className="h-5 w-5 text-primary" />
                 <span className="font-medium">Sábado 29 de agosto</span>
               </div>
-              <div className="flex items-center gap-2 rounded-lg border border-paper/10 bg-paper/10 px-4 py-2 backdrop-blur-sm">
+              <div className="flex w-full max-w-full items-center gap-2 rounded-lg border border-paper/10 bg-paper/10 px-4 py-2 backdrop-blur-sm sm:w-auto">
                 <Clock className="h-5 w-5 text-primary" />
                 <span className="font-medium">11:00 - 19:00 hrs</span>
               </div>
-              <div className="flex items-center gap-2 rounded-lg border border-paper/10 bg-paper/10 px-4 py-2 backdrop-blur-sm">
+              <div className="flex w-full max-w-full items-center gap-2 rounded-lg border border-paper/10 bg-paper/10 px-4 py-2 backdrop-blur-sm sm:w-auto">
                 <MapPin className="h-5 w-5 text-primary" />
                 <span className="font-medium">Ola Hotel, Av. Providencia 307</span>
               </div>
             </div>
-            <div className="mt-10 flex flex-wrap gap-4">
+            <div className="mt-10 grid gap-4 sm:flex sm:flex-wrap">
               <Button
                 asChild
                 size="lg"
-                className="bg-primary text-primary-foreground hover:bg-primary/90"
+                className="w-full bg-primary text-primary-foreground hover:bg-primary/90 sm:w-auto"
               >
                 <Link to="." hash="registro" resetScroll={false}>
                   Reservar entrada al evento
@@ -285,7 +290,7 @@ function Index() {
                 asChild
                 size="lg"
                 variant="outline"
-                className="border-paper/30 bg-paper/10 text-paper backdrop-blur-sm hover:bg-paper/20 hover:text-paper"
+                className="w-full border-paper/30 bg-paper/10 text-paper backdrop-blur-sm hover:bg-paper/20 hover:text-paper sm:w-auto"
               >
                 <Link to="." hash="registro" resetScroll={false}>
                   Ver horarios disponibles
