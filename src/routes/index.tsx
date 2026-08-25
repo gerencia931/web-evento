@@ -87,20 +87,25 @@ export const Route = createFileRoute("/")({
 
 function SlotCard({
   slot,
+  position,
   selected,
   onSelect,
 }: {
   slot: Slot;
+  position: number;
   selected: boolean;
   onSelect: (slot: Slot) => void;
 }) {
   const isFull = slot.available <= 0;
   const isLow = slot.available <= Math.max(6, Math.round(slot.capacity * 0.25));
+  const urgencyBaselines = isLow ? [95, 98, 96, 99] : [91, 96, 89, 94];
+  const urgencyBaseline = urgencyBaselines[position % urgencyBaselines.length];
   const actualReservedPercent = Math.min(
     100,
     Math.round((slot.registered / Math.max(1, slot.capacity)) * 100),
   );
-  const urgencyPercent = Math.max(actualReservedPercent, isLow ? 92 : 84);
+  const urgencyPercent = Math.min(99, Math.max(actualReservedPercent, urgencyBaseline));
+  const urgencyLabel = isLow || urgencyPercent >= 95 ? "Últimas" : "Alta demanda";
 
   return (
     <button
@@ -131,7 +136,7 @@ function SlotCard({
         {!isFull && (
           <span className="inline-flex items-center gap-1 rounded-full bg-primary/15 px-2 py-0.5 text-xs font-semibold text-primary">
             <Flame className="h-3 w-3" />
-            {isLow ? "Últimas" : "Alta demanda"}
+            {urgencyLabel}
           </span>
         )}
       </div>
@@ -525,10 +530,11 @@ function Index() {
                     control={control}
                     render={({ field }) => (
                       <div className="grid gap-3 sm:grid-cols-2">
-                        {slots.map((slot) => (
+                        {slots.map((slot, index) => (
                           <SlotCard
                             key={slot.id}
                             slot={slot}
+                            position={index}
                             selected={field.value === slot.id}
                             onSelect={(s) => field.onChange(s.id)}
                           />
