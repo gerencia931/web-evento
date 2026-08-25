@@ -60,6 +60,28 @@ function ConfirmationPage() {
           <div className="absolute inset-0 bg-gradient-to-b from-ink/30 via-ink/40 to-ink/95" />
         </div>
 
+        <header className="absolute inset-x-0 top-0 z-20">
+          <div className="mx-auto flex w-full max-w-6xl items-center justify-between gap-4 px-6 py-5 md:px-8 md:py-6">
+            <Link to="/" aria-label="Puntacaribe inicio" className="inline-flex shrink-0">
+              <img
+                src="/images/logo-white-punta.png"
+                alt="Puntacaribe"
+                width={842}
+                height={231}
+                className="h-10 w-auto md:h-14"
+              />
+            </Link>
+            <Button
+              asChild
+              size="sm"
+              variant="outline"
+              className="hidden border-paper/30 bg-paper/10 text-paper backdrop-blur-sm hover:bg-paper/20 hover:text-paper sm:inline-flex"
+            >
+              <Link to="/">Volver al inicio</Link>
+            </Button>
+          </div>
+        </header>
+
         <div className="relative mx-auto w-full max-w-6xl px-6 pb-28 pt-20 md:px-8 md:pb-36 md:pt-28">
           <div className="max-w-3xl">
             <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-paper/20 bg-primary/20 px-4 py-2 text-sm font-medium text-primary-light backdrop-blur-sm">
