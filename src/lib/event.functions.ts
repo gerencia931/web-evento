@@ -20,6 +20,8 @@ export const INFLUENCER_OPTIONS = [
   "Laloninatejedora",
   "Ignacioruiz",
   "Luisdelviento",
+  "Purowebeo / Simón Salas",
+  "Prensachilena",
   "Ninguno",
 ] as const;
 
