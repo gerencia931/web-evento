@@ -95,7 +95,13 @@ function SlotCard({
   onSelect: (slot: Slot) => void;
 }) {
   const isFull = slot.available <= 0;
-  const isLow = slot.available <= Math.max(3, Math.round(slot.capacity * 0.25));
+  const reservedPercent = Math.min(
+    100,
+    Math.round((slot.registered / Math.max(1, slot.capacity)) * 100),
+  );
+  const isLow = slot.available <= Math.max(6, Math.round(slot.capacity * 0.25));
+  const urgencyLabel = isFull ? "Agotado" : isLow ? "Últimas entradas" : "Entradas limitadas";
+
   return (
     <button
       type="button"
@@ -113,32 +119,53 @@ function SlotCard({
     >
       <div className="flex w-full items-center justify-between gap-2">
         <span className="font-display text-lg font-semibold text-foreground">{slot.label}</span>
-        {selected && <CheckCircle2 className="h-5 w-5 shrink-0 text-primary" />}
+        <span
+          className={`inline-flex shrink-0 items-center gap-1 rounded-full border px-2 py-0.5 text-xs font-semibold ${
+            isFull
+              ? "border-destructive/30 bg-destructive/10 text-destructive"
+              : isLow
+                ? "border-primary bg-background text-primary"
+                : "border-primary/30 bg-primary/10 text-primary"
+          }`}
+        >
+          {!isFull && <Flame className="h-3 w-3" />}
+          {urgencyLabel}
+        </span>
       </div>
-      <div className="mt-2 flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
+      <div className="mt-3 flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
         <Users className="h-4 w-4" />
         {isFull ? (
-          <span className="font-medium text-destructive">Sin cupos</span>
+          <span className="font-medium text-destructive">Sin entradas disponibles</span>
         ) : (
           <span>
-            Quedan <span className="font-semibold text-foreground">{slot.available}</span> de{" "}
-            {slot.capacity} cupos
-          </span>
-        )}
-        {!isFull && isLow && (
-          <span className="inline-flex items-center gap-1 rounded-full bg-primary/15 px-2 py-0.5 text-xs font-semibold text-primary">
-            <Flame className="h-3 w-3" /> ¡Últimos cupos!
+            Solo <span className="text-lg font-bold text-foreground">{slot.available}</span>{" "}
+            entradas disponibles
           </span>
         )}
       </div>
       {!isFull && (
-        <div className="mt-3 h-1.5 w-full overflow-hidden rounded-full bg-muted">
-          <div
-            className="h-full rounded-full bg-primary transition-all"
-            style={{
-              width: `${Math.min(100, Math.round((slot.registered / Math.max(1, slot.capacity)) * 100))}%`,
-            }}
-          />
+        <p className="mt-1 text-xs font-medium text-primary">
+          Se asignan por orden de registro presencial.
+        </p>
+      )}
+      {!isFull && (
+        <div className="mt-4 w-full">
+          <div className="mb-2 flex items-center justify-between text-xs text-muted-foreground">
+            <span>{slot.capacity} entradas por bloque</span>
+            <span className="font-semibold text-foreground">{reservedPercent}% reservado</span>
+          </div>
+          <div className="h-2 w-full overflow-hidden rounded-full bg-muted">
+            <div
+              className="h-full rounded-full bg-primary transition-all"
+              style={{ width: `${reservedPercent}%` }}
+            />
+          </div>
+        </div>
+      )}
+      {selected && (
+        <div className="mt-4 flex items-center gap-2 text-sm font-semibold text-primary">
+          <CheckCircle2 className="h-4 w-4 shrink-0" />
+          Este será tu bloque de entrada
         </div>
       )}
     </button>
@@ -311,8 +338,8 @@ function Index() {
                   Horario flexible
                 </h3>
                 <p className="mt-1 text-sm text-muted-foreground">
-                  Elige el Bloque AM (11:00 - 14:00) o el Bloque PM (14:00 - 19:00). Cupos
-                  limitados.
+                  Elige el Bloque AM (11:00 - 14:00) o el Bloque PM (14:00 - 19:00). Entradas
+                  limitadas.
                 </p>
               </div>
             </CardContent>
