@@ -32,6 +32,7 @@ export const INTEREST_OPTIONS = [
   "Circuitos EUROPA y otros destinos",
   "Viajes grupales",
   "Feria Cantón",
+  "Programa Japón",
 ] as const;
 
 export const registrationSchema = z.object({
