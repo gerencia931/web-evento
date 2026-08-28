@@ -31,6 +31,7 @@ export const INTEREST_OPTIONS = [
   "Programas BRASIL",
   "Circuitos EUROPA y otros destinos",
   "Viajes grupales",
+  "Feria Cantón",
 ] as const;
 
 export const registrationSchema = z.object({
@@ -52,7 +53,7 @@ export const registrationSchema = z.object({
   interests: z
     .array(z.enum(INTEREST_OPTIONS))
     .min(1, "Selecciona al menos un tipo de vacaciones")
-    .max(5),
+    .max(INTEREST_OPTIONS.length),
   influencer: z.enum(INFLUENCER_OPTIONS, { message: "Selecciona una opción" }),
 });
 
