@@ -109,6 +109,8 @@ function AdminPage() {
       update({ data: vars }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["crm-registrations"] });
+      queryClient.invalidateQueries({ queryKey: ["event-slots-admin"] });
+      queryClient.invalidateQueries({ queryKey: ["event-slots"] });
       toast.success("Contacto actualizado");
     },
     onError: (e: Error) => toast.error(e.message),
@@ -119,6 +121,7 @@ function AdminPage() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["crm-registrations"] });
       queryClient.invalidateQueries({ queryKey: ["event-slots-admin"] });
+      queryClient.invalidateQueries({ queryKey: ["event-slots"] });
       toast.success("Contacto eliminado");
     },
     onError: (e: Error) => toast.error(e.message),
