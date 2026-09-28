@@ -6,9 +6,8 @@ import {
   Calendar,
   CheckCircle2,
   Clock,
+  Gift,
   Mail,
-  MapPin,
-  Navigation,
   Ticket,
 } from "lucide-react";
 
@@ -22,17 +21,15 @@ export const Route = createFileRoute("/confirmacion")({
   validateSearch: (search) => confirmationSearchSchema.parse(search),
   head: () => ({
     meta: [
-      { title: "Entrada reservada | Travel Sale Puntacaribe" },
+      { title: "Registro Cyber confirmado | Puntacaribe" },
       {
         name: "description",
-        content:
-          "Confirmación de entrada gratuita para el evento presencial Travel Sale Puntacaribe en Ola Hotel, Av. Providencia 307, Santiago.",
+        content: "Confirmación de registro para el Cyber Puntacaribe del lunes 5 de octubre.",
       },
-      { property: "og:title", content: "Entrada reservada | Travel Sale Puntacaribe" },
+      { property: "og:title", content: "Registro Cyber confirmado | Puntacaribe" },
       {
         property: "og:description",
-        content:
-          "Tu entrada gratuita para el evento presencial Travel Sale Puntacaribe quedó reservada.",
+        content: "Tu registro para recibir ofertas Cyber de Puntacaribe quedó guardado.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -42,9 +39,6 @@ export const Route = createFileRoute("/confirmacion")({
 });
 
 function ConfirmationPage() {
-  const { bloque } = Route.useSearch();
-  const selectedBlock = bloque?.trim() || "Bloque horario seleccionado";
-
   return (
     <main className="min-h-screen overflow-x-hidden bg-background font-sans">
       <section className="relative overflow-hidden bg-ink text-paper">
@@ -91,16 +85,15 @@ function ConfirmationPage() {
           <div className="min-w-0 max-w-[calc(100vw-3rem)] sm:max-w-3xl">
             <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-paper/20 bg-primary/20 px-4 py-2 text-sm font-medium text-primary-light backdrop-blur-sm">
               <BadgeCheck className="h-4 w-4 text-primary" />
-              Entrada confirmada
+              Registro confirmado
             </div>
             <h1 className="font-display text-4xl font-bold leading-[1.1] tracking-tight sm:text-5xl md:text-7xl">
-              Tu entrada al
-              <span className="block">evento</span>
-              <span className="block text-primary">está reservada</span>
+              Ya estás inscrito
+              <span className="block text-primary">al Cyber</span>
             </h1>
             <p className="mt-6 max-w-2xl break-words text-lg leading-relaxed text-paper/80 md:text-xl">
-              Ya tienes acceso al Travel Sale Puntacaribe, un evento presencial con atención
-              personalizada, precios exclusivos y beneficios para quienes asisten.
+              Tu solicitud quedó registrada. El equipo de Puntacaribe podrá contactarte con ofertas
+              y opciones de viaje para el lunes 5 de octubre.
             </p>
           </div>
         </div>
@@ -112,13 +105,14 @@ function ConfirmationPage() {
             <div className="flex flex-col gap-6 md:flex-row md:items-start md:justify-between">
               <div className="min-w-0">
                 <p className="text-xs font-semibold uppercase tracking-[0.2em] text-primary sm:tracking-[0.3em]">
-                  Travel Sale Puntacaribe
+                  Cyber Puntacaribe
                 </p>
                 <h2 className="mt-3 font-display text-2xl font-bold tracking-tight text-foreground sm:text-3xl md:text-4xl">
-                  Entrada presencial gratuita
+                  Registro Cyber guardado
                 </h2>
                 <p className="mt-3 max-w-xl text-muted-foreground">
-                  Tu registro quedó guardado. El equipo validará tu entrada en el acceso al evento.
+                  Revisaremos tus intereses y te contactaremos con alternativas disponibles para la
+                  campaña.
                 </p>
               </div>
               <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-xl border-2 border-primary bg-background">
@@ -131,49 +125,33 @@ function ConfirmationPage() {
                 <Calendar className="mt-0.5 h-5 w-5 shrink-0 text-primary" />
                 <div>
                   <p className="text-sm font-semibold text-foreground">Fecha</p>
-                  <p className="mt-1 text-sm text-muted-foreground">Sábado 29 de agosto de 2026</p>
+                  <p className="mt-1 text-sm text-muted-foreground">Lunes 5 de octubre de 2026</p>
                 </div>
               </div>
               <div className="flex items-start gap-3 rounded-lg border border-border bg-background p-4">
                 <Clock className="mt-0.5 h-5 w-5 shrink-0 text-primary" />
                 <div>
-                  <p className="text-sm font-semibold text-foreground">Horario</p>
-                  <p className="mt-1 text-sm text-muted-foreground">{selectedBlock}</p>
+                  <p className="text-sm font-semibold text-foreground">Campaña</p>
+                  <p className="mt-1 text-sm text-muted-foreground">Cyber Puntacaribe</p>
                 </div>
               </div>
               <div className="flex items-start gap-3 rounded-lg border border-border bg-background p-4">
-                <MapPin className="mt-0.5 h-5 w-5 shrink-0 text-primary" />
+                <Gift className="mt-0.5 h-5 w-5 shrink-0 text-primary" />
                 <div>
-                  <p className="text-sm font-semibold text-foreground">Lugar</p>
-                  <p className="mt-1 text-sm text-muted-foreground">
-                    Ola Hotel, Av. Providencia 307, Santiago
-                  </p>
+                  <p className="text-sm font-semibold text-foreground">Modalidad</p>
+                  <p className="mt-1 text-sm text-muted-foreground">Atención remota</p>
                 </div>
               </div>
               <div className="flex items-start gap-3 rounded-lg border border-border bg-background p-4">
                 <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-primary" />
                 <div>
                   <p className="text-sm font-semibold text-foreground">Estado</p>
-                  <p className="mt-1 text-sm text-muted-foreground">Entrada confirmada</p>
+                  <p className="mt-1 text-sm text-muted-foreground">Registro confirmado</p>
                 </div>
               </div>
             </div>
 
             <div className="mt-8 grid gap-3 sm:flex sm:flex-wrap">
-              <Button
-                asChild
-                size="lg"
-                className="w-full bg-primary text-primary-foreground hover:bg-primary/90 sm:w-auto"
-              >
-                <a
-                  href="https://www.google.com/maps/search/?api=1&query=Ola%20Hotel%20Av.%20Providencia%20307%20Santiago"
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  <Navigation className="h-4 w-4" />
-                  Abrir ubicación
-                </a>
-              </Button>
               <Button asChild size="lg" variant="outline" className="w-full sm:w-auto">
                 <Link to="/">
                   <ArrowLeft className="h-4 w-4" />
@@ -184,16 +162,14 @@ function ConfirmationPage() {
           </div>
 
           <div className="min-w-0 max-w-[calc(100vw-3rem)] rounded-xl border border-border bg-card p-6 shadow-xl md:max-w-none md:p-8">
-            <h2 className="font-display text-2xl font-bold text-foreground">
-              Te esperamos presencialmente
-            </h2>
+            <h2 className="font-display text-2xl font-bold text-foreground">Qué viene ahora</h2>
             <div className="mt-6 space-y-5">
               <div className="flex gap-3">
                 <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-primary" />
                 <div>
-                  <p className="font-semibold text-foreground">Entrada personal</p>
+                  <p className="font-semibold text-foreground">Registro personal</p>
                   <p className="mt-1 text-sm text-muted-foreground">
-                    El registro es gratuito y está asociado a tus datos de inscripción.
+                    Tus datos quedaron asociados a la campaña Cyber Puntacaribe.
                   </p>
                 </div>
               </div>
@@ -202,18 +178,18 @@ function ConfirmationPage() {
                 <div>
                   <p className="font-semibold text-foreground">Confirmación registrada</p>
                   <p className="mt-1 text-sm text-muted-foreground">
-                    Si necesitas modificar tu asistencia, el equipo puede ayudarte con tu correo de
+                    Si necesitas actualizar información, el equipo puede ayudarte con tu correo de
                     registro.
                   </p>
                 </div>
               </div>
               <div className="flex gap-3">
-                <MapPin className="mt-0.5 h-5 w-5 shrink-0 text-primary" />
+                <Gift className="mt-0.5 h-5 w-5 shrink-0 text-primary" />
                 <div>
-                  <p className="font-semibold text-foreground">Evento en Ola Hotel</p>
+                  <p className="font-semibold text-foreground">Ofertas Cyber</p>
                   <p className="mt-1 text-sm text-muted-foreground">
-                    Llega durante tu bloque para cotizar con atención personalizada y acceder a los
-                    beneficios del Travel Sale.
+                    Te contactaremos para cotizar destinos, fechas y programas disponibles durante
+                    la campaña.
                   </p>
                 </div>
               </div>

@@ -90,18 +90,18 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Travel Sale Puntacaribe" },
+      { title: "Cyber Puntacaribe" },
       {
         name: "description",
         content:
-          "Programas todo incluido al Caribe y otros destinos. Evento presencial de Puntacaribe en Ola Hotel, Av. Providencia 307, Santiago.",
+          "Cyber de viajes Puntacaribe. Programas todo incluido al Caribe, cruceros, Brasil, Europa, Japón y viajes grupales.",
       },
       { name: "author", content: "Puntacaribe" },
-      { property: "og:title", content: "Travel Sale Puntacaribe" },
+      { property: "og:title", content: "Cyber Puntacaribe" },
       {
         property: "og:description",
         content:
-          "Programas todo incluido al Caribe y otros destinos. Evento presencial de Puntacaribe en Ola Hotel, Av. Providencia 307, Santiago.",
+          "Cyber de viajes Puntacaribe. Inscríbete para recibir ofertas y asesoría personalizada.",
       },
 
       { property: "og:type", content: "website" },

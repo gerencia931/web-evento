@@ -13,6 +13,8 @@ export const slotSchema = z.object({
 
 export type Slot = z.infer<typeof slotSchema>;
 
+export const CURRENT_CAMPAIGN = "cyber";
+
 export const INFLUENCER_OPTIONS = [
   "El Ranty",
   "Otakin",
@@ -36,7 +38,7 @@ export const INTEREST_OPTIONS = [
 ] as const;
 
 export const registrationSchema = z.object({
-  slot_id: z.string().uuid({ message: "Selecciona un bloque horario" }),
+  slot_id: z.string().uuid({ message: "No pudimos preparar la campaña seleccionada" }),
   name: z
     .string()
     .trim()
@@ -88,10 +90,29 @@ export const getSlots = createServerFn({ method: "GET" }).handler(async () => {
   const { data, error } = await supabasePublicServer.rpc("get_event_slots_with_counts");
 
   if (error || !data) {
-    throw new Error("No pudimos cargar los bloques horarios. Intenta de nuevo.");
+    throw new Error("No pudimos cargar las campañas. Intenta de nuevo.");
   }
 
   return data.map((slot): Slot => slotSchema.parse(slot));
+});
+
+export const getCyberSlot = createServerFn({ method: "GET" }).handler(async () => {
+  const { supabasePublicServer } = await import("@/integrations/supabase/client-public.server");
+
+  const { data, error } = await supabasePublicServer.rpc("get_event_slots_with_counts");
+
+  if (error || !data) {
+    throw new Error("No pudimos cargar la campaña Cyber. Intenta de nuevo.");
+  }
+
+  const slots = data.map((slot): Slot => slotSchema.parse(slot));
+  const cyberSlot = slots.find((slot) => slot.label.toLowerCase().includes("cyber"));
+
+  if (!cyberSlot) {
+    return null;
+  }
+
+  return cyberSlot;
 });
 
 export const registerForSlot = createServerFn({ method: "POST" })
@@ -106,17 +127,18 @@ export const registerForSlot = createServerFn({ method: "POST" })
       _phone: formatChilePhone(data.phone),
       _interests: data.interests,
       _influencer: data.influencer,
+      _campaign: CURRENT_CAMPAIGN,
     });
 
     if (error) {
       if (error.code === "23505" || error.message.includes("Ya estás registrado")) {
-        throw new Error("Ya estás registrado en este bloque horario.");
+        throw new Error("Ya estás registrado en esta campaña.");
       }
       if (error.message.includes("no tiene cupos")) {
-        throw new Error("El bloque horario seleccionado ya no tiene cupos disponibles.");
+        throw new Error("La campaña seleccionada ya no tiene cupos disponibles.");
       }
       if (error.message.includes("no existe")) {
-        throw new Error("El bloque horario seleccionado no existe.");
+        throw new Error("La campaña seleccionada no existe.");
       }
       throw new Error("Hubo un error al guardar tu registro. Intenta de nuevo.");
     }

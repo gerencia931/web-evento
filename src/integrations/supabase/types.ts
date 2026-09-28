@@ -10,6 +10,7 @@ export type Database = {
     Tables: {
       event_registrations: {
         Row: {
+          campaign: string;
           created_at: string;
           email: string;
           id: string;
@@ -23,6 +24,7 @@ export type Database = {
           updated_at: string;
         };
         Insert: {
+          campaign?: string;
           created_at?: string;
           email: string;
           id?: string;
@@ -36,6 +38,7 @@ export type Database = {
           updated_at?: string;
         };
         Update: {
+          campaign?: string;
           created_at?: string;
           email?: string;
           id?: string;
@@ -133,6 +136,7 @@ export type Database = {
       };
       register_for_event_slot: {
         Args: {
+          _campaign?: string | null;
           _email: string;
           _influencer?: string | null;
           _interests?: string[];

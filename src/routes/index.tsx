@@ -6,13 +6,10 @@ import { toast } from "sonner";
 import {
   Calendar,
   Clock,
-  MapPin,
   Gift,
   Tag,
   Check,
   CheckCircle2,
-  Users,
-  Flame,
   Sparkles,
   Plane,
   HelpCircle,
@@ -37,7 +34,7 @@ import {
 } from "@/components/ui/accordion";
 
 import {
-  getSlots,
+  getCyberSlot,
   registerForSlot,
   registrationSchema,
   formatChilePhone,
@@ -46,33 +43,32 @@ import {
   INTEREST_OPTIONS,
   INFLUENCER_OPTIONS,
   type RegistrationInput,
-  type Slot,
 } from "@/lib/event.functions";
 import { trackMeta } from "@/lib/meta-pixel";
 
-const slotsQueryOptions = queryOptions({
-  queryKey: ["event-slots"],
-  queryFn: async () => getSlots(),
+const cyberSlotQueryOptions = queryOptions({
+  queryKey: ["cyber-slot"],
+  queryFn: async () => getCyberSlot(),
   staleTime: 30_000,
 });
 
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Travel Sale Puntacaribe | Programas todo incluido al Caribe" },
+      { title: "Cyber Puntacaribe | Ofertas de viajes lunes 5 de octubre" },
       {
         name: "description",
         content:
-          "Reserva tu entrada gratuita para el Travel Sale de Puntacaribe en Ola Hotel, Av. Providencia 307. Programas todo incluido, cruceros, Brasil y Europa: nosotros gestionamos absolutamente todo por ti.",
+          "Inscríbete al Cyber Puntacaribe del lunes 5 de octubre. Programas todo incluido, cruceros, Brasil, Europa, Japón y más destinos con asesoría personalizada.",
       },
       {
         property: "og:title",
-        content: "Travel Sale Puntacaribe | Programas todo incluido al Caribe",
+        content: "Cyber Puntacaribe | Ofertas de viajes lunes 5 de octubre",
       },
       {
         property: "og:description",
         content:
-          "Reserva tu entrada gratuita para el Travel Sale de Puntacaribe. Programas todo incluido, cruceros, Brasil y Europa: nosotros gestionamos absolutamente todo por ti.",
+          "Regístrate para recibir ofertas Cyber de Puntacaribe en programas todo incluido, cruceros, Brasil, Europa, Japón y viajes grupales.",
       },
 
       { property: "og:type", content: "website" },
@@ -80,82 +76,15 @@ export const Route = createFileRoute("/")({
     ],
   }),
   loader: async ({ context }) => {
-    await context.queryClient.ensureQueryData(slotsQueryOptions);
+    await context.queryClient.ensureQueryData(cyberSlotQueryOptions);
   },
   component: Index,
 });
 
-function SlotCard({
-  slot,
-  position,
-  selected,
-  onSelect,
-}: {
-  slot: Slot;
-  position: number;
-  selected: boolean;
-  onSelect: (slot: Slot) => void;
-}) {
-  const isFull = slot.available <= 0;
-  const isLow = slot.available <= Math.max(6, Math.round(slot.capacity * 0.25));
-  const urgencyBaselines = isLow ? [95, 98, 96, 99] : [91, 96, 89, 94];
-  const urgencyBaseline = urgencyBaselines[position % urgencyBaselines.length];
-  const actualReservedPercent = Math.min(
-    100,
-    Math.round((slot.registered / Math.max(1, slot.capacity)) * 100),
-  );
-  const urgencyPercent = Math.min(99, Math.max(actualReservedPercent, urgencyBaseline));
-  const urgencyLabel = isLow || urgencyPercent >= 95 ? "Últimas" : "Alta demanda";
-
-  return (
-    <button
-      type="button"
-      disabled={isFull}
-      onClick={() => onSelect(slot)}
-      className={`
-        group relative flex flex-col items-start rounded-xl border-2 p-4 text-left transition-all
-        ${
-          selected
-            ? "border-primary bg-primary/10 ring-2 ring-primary"
-            : "border-border bg-card hover:border-primary/40 hover:bg-accent"
-        }
-        ${isFull ? "cursor-not-allowed opacity-60" : "cursor-pointer"}
-      `}
-    >
-      <div className="flex w-full items-center justify-between gap-2">
-        <span className="font-display text-lg font-semibold text-foreground">{slot.label}</span>
-        {selected && <CheckCircle2 className="h-5 w-5 shrink-0 text-primary" />}
-      </div>
-      <div className="mt-2 flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
-        <Users className="h-4 w-4" />
-        {isFull ? (
-          <span className="font-medium text-destructive">Sin entradas</span>
-        ) : (
-          <span className="font-semibold text-primary">Pocas entradas disponibles</span>
-        )}
-        {!isFull && (
-          <span className="inline-flex items-center gap-1 rounded-full bg-primary/15 px-2 py-0.5 text-xs font-semibold text-primary">
-            <Flame className="h-3 w-3" />
-            {urgencyLabel}
-          </span>
-        )}
-      </div>
-      {!isFull && (
-        <div className="mt-3 h-1.5 w-full overflow-hidden rounded-full bg-muted">
-          <div
-            className="h-full rounded-full bg-primary transition-all"
-            style={{ width: `${urgencyPercent}%` }}
-          />
-        </div>
-      )}
-    </button>
-  );
-}
-
 function Index() {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
-  const { data: slots } = useSuspenseQuery(slotsQueryOptions);
+  const { data: cyberSlot } = useSuspenseQuery(cyberSlotQueryOptions);
 
   const {
     register,
@@ -166,7 +95,7 @@ function Index() {
   } = useForm<RegistrationInput>({
     resolver: zodResolver(registrationSchema),
     defaultValues: {
-      slot_id: "",
+      slot_id: cyberSlot?.id ?? "",
       name: "",
       email: "",
       phone: "",
@@ -177,24 +106,25 @@ function Index() {
 
   const onSubmit = async (values: RegistrationInput) => {
     try {
-      const selectedSlot = slots.find((slot) => slot.id === values.slot_id);
+      if (!cyberSlot) {
+        toast.error("La campaña Cyber todavía no está configurada.");
+        return;
+      }
 
-      await registerForSlot({ data: values });
+      const registrationValues = { ...values, slot_id: cyberSlot.id };
+
+      await registerForSlot({ data: registrationValues });
       void trackMeta("Lead", {
         email: values.email,
         phone: formatChilePhone(values.phone),
         name: values.name,
       });
-      toast.success(
-        `¡Entrada reservada! Te esperamos el sábado 29 de agosto en el bloque seleccionado.`,
-      );
+      toast.success("¡Registro recibido! Te contactaremos con las ofertas Cyber.");
       reset();
-      await queryClient.invalidateQueries({ queryKey: ["event-slots"] });
+      await queryClient.invalidateQueries({ queryKey: ["cyber-slot"] });
       await navigate({
         to: "/confirmacion",
-        search: {
-          bloque: selectedSlot?.label,
-        },
+        search: {},
       });
     } catch (error) {
       const message = error instanceof Error ? error.message : "Error al enviar el registro.";
@@ -240,7 +170,7 @@ function Index() {
               className="hidden bg-primary text-primary-foreground hover:bg-primary/90 sm:inline-flex"
             >
               <Link to="." hash="registro" resetScroll={false}>
-                Reservar entrada
+                Inscribirme al Cyber
               </Link>
             </Button>
           </div>
@@ -250,30 +180,30 @@ function Index() {
           <div className="max-w-[calc(100vw-3rem)] sm:max-w-3xl">
             <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-paper/20 bg-primary/20 px-4 py-2 text-sm font-medium text-primary-light backdrop-blur-sm">
               <Tag className="h-4 w-4 text-primary" />
-              Evento exclusivo presencial
+              Cyber de viajes
             </div>
             <h1 className="font-display text-5xl font-bold leading-[1.1] tracking-tight md:text-7xl">
-              Travel Sale
+              Cyber
               <span className="block text-primary">Puntacaribe</span>
             </h1>
             <p className="mt-6 max-w-full text-lg leading-relaxed text-paper/80 sm:max-w-xl md:text-xl">
-              Sábado 29 de agosto en Ola Hotel, Av. Providencia 307. Programas todo incluido,
-              cruceros, Brasil y Europa: en Puntacaribe gestionamos absolutamente todo por ti.
-              Reserva tu entrada al evento y descubre precios exclusivos.
+              Lunes 5 de octubre: ofertas Cyber en programas todo incluido, cruceros, Brasil,
+              Europa, Japón y viajes grupales. Déjanos tus datos y te contactamos con opciones
+              personalizadas antes de que se agoten.
             </p>
 
             <div className="mt-10 grid gap-4 text-paper/90 sm:flex sm:flex-wrap">
               <div className="flex w-full max-w-full items-center gap-2 rounded-lg border border-paper/10 bg-paper/10 px-4 py-2 backdrop-blur-sm sm:w-auto">
                 <Calendar className="h-5 w-5 text-primary" />
-                <span className="font-medium">Sábado 29 de agosto</span>
+                <span className="font-medium">Lunes 5 de octubre</span>
               </div>
               <div className="flex w-full max-w-full items-center gap-2 rounded-lg border border-paper/10 bg-paper/10 px-4 py-2 backdrop-blur-sm sm:w-auto">
                 <Clock className="h-5 w-5 text-primary" />
-                <span className="font-medium">11:00 - 19:00 hrs</span>
+                <span className="font-medium">Ofertas por tiempo limitado</span>
               </div>
               <div className="flex w-full max-w-full items-center gap-2 rounded-lg border border-paper/10 bg-paper/10 px-4 py-2 backdrop-blur-sm sm:w-auto">
-                <MapPin className="h-5 w-5 text-primary" />
-                <span className="font-medium">Ola Hotel, Av. Providencia 307</span>
+                <Gift className="h-5 w-5 text-primary" />
+                <span className="font-medium">Atención personalizada</span>
               </div>
             </div>
             <div className="mt-10 grid gap-4 sm:flex sm:flex-wrap">
@@ -283,7 +213,7 @@ function Index() {
                 className="w-full bg-primary text-primary-foreground hover:bg-primary/90 sm:w-auto"
               >
                 <Link to="." hash="registro" resetScroll={false}>
-                  Reservar entrada al evento
+                  Inscribirme al Cyber
                 </Link>
               </Button>
               <Button
@@ -293,7 +223,7 @@ function Index() {
                 className="w-full border-paper/30 bg-paper/10 text-paper backdrop-blur-sm hover:bg-paper/20 hover:text-paper sm:w-auto"
               >
                 <Link to="." hash="registro" resetScroll={false}>
-                  Ver horarios disponibles
+                  Ver programas Cyber
                 </Link>
               </Button>
             </div>
@@ -307,14 +237,14 @@ function Index() {
           <Card className="border-border bg-card">
             <CardContent className="flex items-start gap-4 pt-6">
               <div className="rounded-lg bg-primary/10 p-3">
-                <MapPin className="h-6 w-6 text-primary" />
+                <Gift className="h-6 w-6 text-primary" />
               </div>
               <div>
-                <h3 className="font-display text-lg font-semibold text-foreground">Ubicación</h3>
+                <h3 className="font-display text-lg font-semibold text-foreground">Cyber</h3>
                 <p className="mt-1 text-sm text-muted-foreground">
-                  Ola Hotel
+                  Lunes 5 de octubre
                   <br />
-                  Av. Providencia 307, Santiago
+                  beneficios por tiempo limitado
                 </p>
               </div>
             </CardContent>
@@ -343,11 +273,11 @@ function Index() {
               </div>
               <div>
                 <h3 className="font-display text-lg font-semibold text-foreground">
-                  Horario flexible
+                  Atención flexible
                 </h3>
                 <p className="mt-1 text-sm text-muted-foreground">
-                  Elige el Bloque AM (11:00 - 14:00) o el Bloque PM (14:00 - 19:00). Quedan pocas
-                  entradas por horario.
+                  Te contactamos durante la campaña para revisar destinos, fechas, presupuesto y
+                  disponibilidad real antes de reservar.
                 </p>
               </div>
             </CardContent>
@@ -366,7 +296,7 @@ function Index() {
               Preguntas frecuentes
             </h2>
             <p className="text-muted-foreground">
-              Todo lo que necesitas saber antes de reservar tu entrada.
+              Todo lo que necesitas saber antes de inscribirte al Cyber.
             </p>
           </div>
         </div>
@@ -374,13 +304,12 @@ function Index() {
           <Accordion type="single" collapsible className="w-full">
             <AccordionItem value="event-what">
               <AccordionTrigger className="text-left text-base font-semibold text-foreground">
-                ¿Qué sucederá en el Travel Sale Puntacaribe?
+                ¿Qué es el Cyber Puntacaribe?
               </AccordionTrigger>
               <AccordionContent className="text-muted-foreground">
-                Es un evento presencial exclusivo en Ola Hotel, Av. Providencia 307. Durante tu
-                bloque horario conocerás las mejores promociones de programas todo incluido al
-                Caribe, cruceros, Brasil y circuitos por Europa. Tendrás atención personalizada,
-                precios exclusivos de evento y sorpresas solo para quienes asistan.
+                Es una campaña de ofertas de viajes para el lunes 5 de octubre. Al inscribirte, el
+                equipo de Puntacaribe puede contactarte con opciones para programas todo incluido,
+                cruceros, Brasil, Europa, Japón y viajes grupales según tu perfil.
               </AccordionContent>
             </AccordionItem>
             <AccordionItem value="agency-destinations">
@@ -390,20 +319,20 @@ function Index() {
               <AccordionContent className="text-muted-foreground">
                 Gestionamos absolutamente todo por ti: vuelos, traslados, hoteles, excursiones y
                 seguros. Nos especializamos en programas todo incluido al Caribe, cruceros, viajes a
-                Brasil, circuitos por Europa y viajes grupales. En el evento te presentamos las
-                opciones que mejor se ajusten a tu perfil y presupuesto.
+                Brasil, circuitos por Europa, Japón y viajes grupales. Durante el Cyber te
+                presentamos las opciones que mejor se ajusten a tu perfil y presupuesto.
               </AccordionContent>
             </AccordionItem>
           </Accordion>
           <Accordion type="single" collapsible className="w-full">
             <AccordionItem value="offers">
               <AccordionTrigger className="text-left text-base font-semibold text-foreground">
-                ¿Las promociones son solo para quienes asistan presencialmente?
+                ¿Inscribirme garantiza una tarifa?
               </AccordionTrigger>
               <AccordionContent className="text-muted-foreground">
-                Sí. Los descuentos, beneficios extras y sorpresas del Travel Sale son exclusivos
-                para asistentes. Reservar tu entrada asegura tu acceso a esas condiciones por tiempo
-                limitado.
+                La inscripción deja tus datos priorizados para la campaña. Las tarifas y beneficios
+                dependen de disponibilidad, fechas y condiciones de cada programa, por eso te
+                contactaremos para cotizar contigo lo antes posible.
               </AccordionContent>
             </AccordionItem>
           </Accordion>
@@ -424,8 +353,8 @@ function Index() {
             <p className="mt-4 text-paper/80">
               Influencers, artistas y viajeros grupales ya vivieron su experiencia todo incluido con
               Puntacaribe. Nosotros gestionamos absolutamente todo por ellos: vuelos, hoteles,
-              traslados y excursiones. En el Travel Sale te armamos el mismo viaje, con precios
-              exclusivos del evento.
+              traslados y excursiones. En el Cyber te ayudamos a encontrar el programa correcto con
+              beneficios por tiempo limitado.
             </p>
           </div>
 
@@ -476,7 +405,7 @@ function Index() {
             ¿Listo para tu próximo viaje todo incluido?
           </h3>
           <p className="text-muted-foreground">
-            Reserva tu entrada ahora y accede a precios exclusivos del Travel Sale.
+            Inscríbete ahora y queda priorizado para recibir ofertas del Cyber Puntacaribe.
           </p>
           <Button
             asChild
@@ -484,7 +413,7 @@ function Index() {
             className="bg-primary text-primary-foreground hover:bg-primary/90"
           >
             <Link to="." hash="registro" resetScroll={false}>
-              Reservar entrada gratuita
+              Inscribirme gratis
             </Link>
           </Button>
         </div>
@@ -495,24 +424,24 @@ function Index() {
         <div className="grid gap-10 lg:grid-cols-5">
           <div className="lg:col-span-2">
             <h2 className="font-display text-3xl font-bold tracking-tight text-foreground md:text-4xl">
-              Reserva tu entrada al evento
+              Inscríbete al Cyber
             </h2>
             <p className="mt-4 text-muted-foreground">
-              Selecciona el bloque en el que prefieras asistir y completa tus datos. Te enviaremos
-              la confirmación a tu correo.
+              Completa tus datos y cuéntanos qué viaje estás buscando. El equipo de Puntacaribe te
+              contactará con opciones para el Cyber del lunes 5 de octubre.
             </p>
             <div className="mt-8 hidden space-y-4 lg:block">
               <div className="flex items-center gap-3 text-sm text-muted-foreground">
                 <CheckCircle2 className="h-5 w-5 text-primary" />
-                Registro gratuito y obligatorio para ingresar.
+                Registro gratuito para recibir ofertas Cyber.
               </div>
               <div className="flex items-center gap-3 text-sm text-muted-foreground">
                 <CheckCircle2 className="h-5 w-5 text-primary" />
-                Una entrada por persona por bloque horario.
+                Atención personalizada según destino, fechas y presupuesto.
               </div>
               <div className="flex items-center gap-3 text-sm text-muted-foreground">
                 <CheckCircle2 className="h-5 w-5 text-primary" />
-                Quedan pocas entradas por bloque horario.
+                Beneficios por tiempo limitado durante la campaña.
               </div>
             </div>
           </div>
@@ -523,34 +452,17 @@ function Index() {
                 Formulario de inscripción
               </CardTitle>
               <CardDescription>
-                Quedan pocas entradas. Asegura la tuya antes de que se agoten.
+                Déjanos tus datos para priorizar tu cotización Cyber.
               </CardDescription>
             </CardHeader>
             <CardContent>
               <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-                <div className="space-y-3">
-                  <Label className="text-foreground">Bloque horario</Label>
-                  <Controller
-                    name="slot_id"
-                    control={control}
-                    render={({ field }) => (
-                      <div className="grid gap-3 sm:grid-cols-2">
-                        {slots.map((slot, index) => (
-                          <SlotCard
-                            key={slot.id}
-                            slot={slot}
-                            position={index}
-                            selected={field.value === slot.id}
-                            onSelect={(s) => field.onChange(s.id)}
-                          />
-                        ))}
-                      </div>
-                    )}
-                  />
-                  {errors.slot_id && (
-                    <p className="text-sm text-destructive">{errors.slot_id.message}</p>
-                  )}
-                </div>
+                <input type="hidden" value={cyberSlot?.id ?? ""} {...register("slot_id")} />
+                {!cyberSlot && (
+                  <p className="rounded-lg border border-primary/30 bg-primary/10 px-4 py-3 text-sm font-medium text-primary">
+                    Estamos preparando la inscripción Cyber. Vuelve en unos minutos.
+                  </p>
+                )}
 
                 <div className="grid gap-6 sm:grid-cols-2">
                   <div className="space-y-2">
@@ -702,10 +614,14 @@ function Index() {
                 <Button
                   type="submit"
                   size="lg"
-                  disabled={isSubmitting}
+                  disabled={isSubmitting || !cyberSlot}
                   className="w-full bg-primary text-primary-foreground hover:bg-primary/90"
                 >
-                  {isSubmitting ? "Registrando..." : "Confirmar mi asistencia"}
+                  {isSubmitting
+                    ? "Registrando..."
+                    : cyberSlot
+                      ? "Quiero recibir ofertas Cyber"
+                      : "Preparando inscripción Cyber"}
                 </Button>
               </form>
             </CardContent>
@@ -717,8 +633,6 @@ function Index() {
       <footer className="border-t border-border bg-card py-8">
         <div className="mx-auto max-w-6xl px-6 text-center text-sm text-muted-foreground md:px-8">
           © {new Date().getFullYear()} Puntacaribe. Todos los derechos reservados.
-          <br />
-          Evento presencial en Ola Hotel, Av. Providencia 307, Santiago.
           <br />
           <Link to="/auth" className="text-xs underline-offset-4 hover:underline">
             Acceso equipo

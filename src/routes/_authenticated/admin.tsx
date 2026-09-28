@@ -5,12 +5,14 @@ import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import {
+  CAMPAIGNS,
   STATUSES,
   claimFirstAdmin,
   deleteRegistration,
   getMyAdminStatus,
   listRegistrations,
   updateRegistration,
+  type Campaign,
   type CrmRegistration,
   type RegistrationStatus,
 } from "@/lib/crm.functions";
@@ -26,6 +28,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Table,
   TableBody,
@@ -41,12 +44,12 @@ export const Route = createFileRoute("/_authenticated/admin")({
       { title: "CRM de contactos | Puntacaribe" },
       {
         name: "description",
-        content: "Panel interno para gestionar los registros del evento Travel Sale Puntacaribe.",
+        content: "Panel interno para gestionar contactos de campañas Puntacaribe.",
       },
       { property: "og:title", content: "CRM de contactos | Puntacaribe" },
       {
         property: "og:description",
-        content: "Gestiona los contactos registrados al Travel Sale de Puntacaribe.",
+        content: "Gestiona los contactos registrados al Cyber y al Travel Sale de Puntacaribe.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
@@ -63,6 +66,16 @@ const STATUS_LABEL: Record<RegistrationStatus, string> = {
   cancelado: "Cancelado",
 };
 
+const CAMPAIGN_LABEL: Record<Campaign, string> = {
+  cyber: "Cyber",
+  sale: "Travel Sale",
+};
+
+function slotBelongsToCampaign(slot: Slot, campaign: Campaign) {
+  const isCyberSlot = slot.label.toLowerCase().includes("cyber");
+  return campaign === "cyber" ? isCyberSlot : !isCyberSlot;
+}
+
 function AdminPage() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
@@ -75,6 +88,7 @@ function AdminPage() {
 
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("todos");
+  const [campaign, setCampaign] = useState<Campaign>("cyber");
   const [openNotes, setOpenNotes] = useState<string | null>(null);
 
   const adminQuery = useQuery({
@@ -130,9 +144,26 @@ function AdminPage() {
   const rows: CrmRegistration[] = useMemo(() => listQuery.data ?? [], [listQuery.data]);
   const slots: Slot[] = useMemo(() => slotsQuery.data ?? [], [slotsQuery.data]);
 
+  const campaignRows = useMemo(() => rows.filter((r) => r.campaign === campaign), [rows, campaign]);
+  const campaignSlots = useMemo(
+    () => slots.filter((slot) => slotBelongsToCampaign(slot, campaign)),
+    [slots, campaign],
+  );
+  const campaignCounts = useMemo(
+    () =>
+      CAMPAIGNS.reduce(
+        (acc, item) => {
+          acc[item] = rows.filter((r) => r.campaign === item).length;
+          return acc;
+        },
+        {} as Record<Campaign, number>,
+      ),
+    [rows],
+  );
+
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase();
-    return rows.filter((r) => {
+    return campaignRows.filter((r) => {
       const matchesStatus = statusFilter === "todos" || r.status === statusFilter;
       const matchesSearch =
         !q ||
@@ -143,22 +174,23 @@ function AdminPage() {
         (r.influencer ?? "").toLowerCase().includes(q);
       return matchesStatus && matchesSearch;
     });
-  }, [rows, search, statusFilter]);
+  }, [campaignRows, search, statusFilter]);
 
   const stats = useMemo(() => {
     const byStatus = STATUSES.map((s) => ({
       status: s,
-      count: rows.filter((r) => r.status === s).length,
+      count: campaignRows.filter((r) => r.status === s).length,
     }));
-    return { total: rows.length, byStatus };
-  }, [rows]);
+    return { total: campaignRows.length, byStatus };
+  }, [campaignRows]);
 
   const exportCsv = () => {
     const header = [
       "Nombre",
       "Email",
       "Teléfono",
-      "Bloque",
+      "Campaña",
+      "Origen",
       "Intereses",
       "Influencer",
       "Estado",
@@ -170,6 +202,7 @@ function AdminPage() {
         r.name,
         r.email,
         r.phone ?? "",
+        CAMPAIGN_LABEL[r.campaign],
         r.slot_label,
         r.interests.join(" | "),
         r.influencer ?? "Ninguno",
@@ -184,7 +217,7 @@ function AdminPage() {
     const url = URL.createObjectURL(new Blob([`\uFEFF${csv}`], { type: "text/csv;charset=utf-8" }));
     const a = document.createElement("a");
     a.href = url;
-    a.download = "contactos-travel-sale.csv";
+    a.download = `contactos-${campaign}.csv`;
     a.click();
     URL.revokeObjectURL(url);
   };
@@ -229,7 +262,7 @@ function AdminPage() {
             <p className="text-xs font-semibold uppercase tracking-[0.3em] text-primary">
               Puntacaribe
             </p>
-            <h1 className="text-2xl font-bold text-foreground">CRM Travel Sale</h1>
+            <h1 className="text-2xl font-bold text-foreground">CRM campañas</h1>
           </div>
           <div className="flex gap-2">
             <Button variant="outline" onClick={exportCsv}>
@@ -243,7 +276,17 @@ function AdminPage() {
       </header>
 
       <section className="mx-auto max-w-7xl px-6 py-6">
-        <div className="grid gap-3 sm:grid-cols-3 lg:grid-cols-6">
+        <Tabs value={campaign} onValueChange={(value) => setCampaign(value as Campaign)}>
+          <TabsList>
+            {CAMPAIGNS.map((item) => (
+              <TabsTrigger key={item} value={item}>
+                {CAMPAIGN_LABEL[item]} ({campaignCounts[item] ?? 0})
+              </TabsTrigger>
+            ))}
+          </TabsList>
+        </Tabs>
+
+        <div className="mt-4 grid gap-3 sm:grid-cols-3 lg:grid-cols-6">
           <div className="rounded-xl border border-border bg-card p-4">
             <p className="text-xs uppercase tracking-wide text-muted-foreground">Total</p>
             <p className="text-2xl font-bold text-foreground">{stats.total}</p>
@@ -261,13 +304,13 @@ function AdminPage() {
         <div className="mt-4 grid gap-3 md:grid-cols-2">
           {slotsQuery.isLoading ? (
             <div className="rounded-xl border border-border bg-card p-5 text-sm text-muted-foreground md:col-span-2">
-              Cargando cupos por horario…
+              Cargando cupos de campaña…
             </div>
           ) : (
-            slots.map((slot) => (
+            campaignSlots.map((slot) => (
               <div key={slot.id} className="rounded-xl border border-border bg-card p-5">
                 <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                  Horario
+                  {campaign === "cyber" ? "Campaña" : "Horario"}
                 </p>
                 <h2 className="mt-1 text-lg font-bold text-foreground">{slot.label}</h2>
                 <div className="mt-4 grid grid-cols-3 gap-3">
@@ -320,7 +363,7 @@ function AdminPage() {
             <TableHeader>
               <TableRow>
                 <TableHead>Contacto</TableHead>
-                <TableHead>Bloque</TableHead>
+                <TableHead>Origen</TableHead>
                 <TableHead>Intereses</TableHead>
                 <TableHead>Influencer</TableHead>
                 <TableHead>Estado</TableHead>

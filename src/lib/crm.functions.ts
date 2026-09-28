@@ -3,14 +3,17 @@ import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
 
 export const STATUSES = ["nuevo", "contactado", "confirmado", "asistio", "cancelado"] as const;
+export const CAMPAIGNS = ["cyber", "sale"] as const;
 
 export type RegistrationStatus = (typeof STATUSES)[number];
+export type Campaign = (typeof CAMPAIGNS)[number];
 
 export type CrmRegistration = {
   id: string;
   name: string;
   email: string;
   phone: string | null;
+  campaign: Campaign;
   status: RegistrationStatus;
   notes: string | null;
   created_at: string;
@@ -50,12 +53,24 @@ export const claimFirstAdmin = createServerFn({ method: "POST" })
 export const listRegistrations = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }): Promise<CrmRegistration[]> => {
-    const { data, error } = await context.supabase
+    let { data, error } = await context.supabase
       .from("event_registrations")
       .select(
-        "id, name, email, phone, status, notes, created_at, slot_id, interests, influencer, event_slots(label)",
+        "id, name, email, phone, campaign, status, notes, created_at, slot_id, interests, influencer, event_slots(label)",
       )
       .order("created_at", { ascending: false });
+
+    if (error && error.message.toLowerCase().includes("campaign")) {
+      const fallback = await context.supabase
+        .from("event_registrations")
+        .select(
+          "id, name, email, phone, status, notes, created_at, slot_id, interests, influencer, event_slots(label)",
+        )
+        .order("created_at", { ascending: false });
+
+      data = fallback.data;
+      error = fallback.error;
+    }
 
     if (error) throw new Error("No pudimos cargar los contactos.");
 
@@ -67,6 +82,7 @@ export const listRegistrations = createServerFn({ method: "GET" })
         name: String(r["name"] ?? ""),
         email: String(r["email"] ?? ""),
         phone: (r["phone"] as string | null) ?? null,
+        campaign: r["campaign"] === "cyber" ? "cyber" : "sale",
         status: (r["status"] as RegistrationStatus) ?? "nuevo",
         notes: (r["notes"] as string | null) ?? null,
         created_at: String(r["created_at"] ?? ""),

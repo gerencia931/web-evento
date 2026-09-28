@@ -12,8 +12,7 @@ export const Route = createFileRoute("/auth")({
       { title: "Acceso al CRM | Puntacaribe" },
       {
         name: "description",
-        content:
-          "Ingreso privado al panel de gestión de contactos del evento Travel Sale Puntacaribe.",
+        content: "Ingreso privado al panel de gestión de contactos de campañas Puntacaribe.",
       },
       { property: "og:title", content: "Acceso al CRM | Puntacaribe" },
       {
@@ -70,7 +69,7 @@ function AuthPage() {
         <p className="text-xs font-semibold uppercase tracking-[0.3em] text-primary">Puntacaribe</p>
         <h1 className="mt-2 text-2xl font-bold text-foreground">Acceso al CRM</h1>
         <p className="mt-1 text-sm text-muted-foreground">
-          Panel privado para gestionar los contactos del Travel Sale.
+          Panel privado para gestionar contactos del Cyber y del Travel Sale.
         </p>
 
         <form onSubmit={handleSubmit} className="mt-6 space-y-4">
