@@ -8,6 +8,7 @@ import {
   Clock,
   Gift,
   Mail,
+  MapPin,
   Ticket,
 } from "lucide-react";
 
@@ -24,12 +25,12 @@ export const Route = createFileRoute("/confirmacion")({
       { title: "Registro Cyber confirmado | Puntacaribe" },
       {
         name: "description",
-        content: "Confirmación de registro para el Cyber Puntacaribe del lunes 5 de octubre.",
+        content: "Confirmación de entrada al evento Cyber Puntacaribe del sábado 3 de octubre.",
       },
       { property: "og:title", content: "Registro Cyber confirmado | Puntacaribe" },
       {
         property: "og:description",
-        content: "Tu registro para recibir ofertas Cyber de Puntacaribe quedó guardado.",
+        content: "Tu entrada al evento presencial Cyber Puntacaribe quedó reservada.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -39,6 +40,8 @@ export const Route = createFileRoute("/confirmacion")({
 });
 
 function ConfirmationPage() {
+  const { bloque } = Route.useSearch();
+
   return (
     <main className="min-h-screen overflow-x-hidden bg-background font-sans">
       <section className="relative overflow-hidden bg-ink text-paper">
@@ -88,12 +91,12 @@ function ConfirmationPage() {
               Registro confirmado
             </div>
             <h1 className="font-display text-4xl font-bold leading-[1.1] tracking-tight sm:text-5xl md:text-7xl">
-              Ya estás inscrito
-              <span className="block text-primary">al Cyber</span>
+              Ya tienes tu entrada
+              <span className="block text-primary">al evento Cyber</span>
             </h1>
             <p className="mt-6 max-w-2xl break-words text-lg leading-relaxed text-paper/80 md:text-xl">
-              Tu solicitud quedó registrada. El equipo de Puntacaribe podrá contactarte con ofertas
-              y opciones de viaje para el lunes 5 de octubre.
+              Tu reserva quedó registrada. Te esperamos el sábado 3 de octubre en Hotel Olá Santiago
+              Providencia.
             </p>
           </div>
         </div>
@@ -108,11 +111,10 @@ function ConfirmationPage() {
                   Cyber Puntacaribe
                 </p>
                 <h2 className="mt-3 font-display text-2xl font-bold tracking-tight text-foreground sm:text-3xl md:text-4xl">
-                  Registro Cyber guardado
+                  Entrada reservada
                 </h2>
                 <p className="mt-3 max-w-xl text-muted-foreground">
-                  Revisaremos tus intereses y te contactaremos con alternativas disponibles para la
-                  campaña.
+                  Guarda esta información para asistir al evento en el bloque que elegiste.
                 </p>
               </div>
               <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-xl border-2 border-primary bg-background">
@@ -125,21 +127,25 @@ function ConfirmationPage() {
                 <Calendar className="mt-0.5 h-5 w-5 shrink-0 text-primary" />
                 <div>
                   <p className="text-sm font-semibold text-foreground">Fecha</p>
-                  <p className="mt-1 text-sm text-muted-foreground">Lunes 5 de octubre de 2026</p>
+                  <p className="mt-1 text-sm text-muted-foreground">Sábado 3 de octubre de 2026</p>
                 </div>
               </div>
               <div className="flex items-start gap-3 rounded-lg border border-border bg-background p-4">
                 <Clock className="mt-0.5 h-5 w-5 shrink-0 text-primary" />
                 <div>
-                  <p className="text-sm font-semibold text-foreground">Campaña</p>
-                  <p className="mt-1 text-sm text-muted-foreground">Cyber Puntacaribe</p>
+                  <p className="text-sm font-semibold text-foreground">Horario</p>
+                  <p className="mt-1 text-sm text-muted-foreground">
+                    {bloque ? bloque.replace(/^Cyber · /, "") : "Horario reservado"}
+                  </p>
                 </div>
               </div>
               <div className="flex items-start gap-3 rounded-lg border border-border bg-background p-4">
-                <Gift className="mt-0.5 h-5 w-5 shrink-0 text-primary" />
+                <MapPin className="mt-0.5 h-5 w-5 shrink-0 text-primary" />
                 <div>
-                  <p className="text-sm font-semibold text-foreground">Modalidad</p>
-                  <p className="mt-1 text-sm text-muted-foreground">Atención remota</p>
+                  <p className="text-sm font-semibold text-foreground">Lugar</p>
+                  <p className="mt-1 text-sm text-muted-foreground">
+                    Hotel Olá Santiago Providencia · Holanda 307, Providencia
+                  </p>
                 </div>
               </div>
               <div className="flex items-start gap-3 rounded-lg border border-border bg-background p-4">
@@ -169,7 +175,7 @@ function ConfirmationPage() {
                 <div>
                   <p className="font-semibold text-foreground">Registro personal</p>
                   <p className="mt-1 text-sm text-muted-foreground">
-                    Tus datos quedaron asociados a la campaña Cyber Puntacaribe.
+                    Tus datos y horario quedaron asociados a tu entrada Cyber Puntacaribe.
                   </p>
                 </div>
               </div>
@@ -186,10 +192,10 @@ function ConfirmationPage() {
               <div className="flex gap-3">
                 <Gift className="mt-0.5 h-5 w-5 shrink-0 text-primary" />
                 <div>
-                  <p className="font-semibold text-foreground">Ofertas Cyber</p>
+                  <p className="font-semibold text-foreground">Evento presencial</p>
                   <p className="mt-1 text-sm text-muted-foreground">
-                    Te contactaremos para cotizar destinos, fechas y programas disponibles durante
-                    la campaña.
+                    Presenta tu nombre al llegar al Hotel Olá Santiago Providencia dentro del bloque
+                    reservado.
                   </p>
                 </div>
               </div>

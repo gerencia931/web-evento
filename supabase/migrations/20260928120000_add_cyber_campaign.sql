@@ -15,8 +15,19 @@ begin
   end if;
 end $$;
 
+update public.event_slots
+set start_time = '12:00',
+    end_time = '15:00',
+    capacity = 70,
+    label = 'Cyber · Bloque 1 · 12:00 a 15:00'
+where start_time = '00:00'
+  and end_time = '23:59'
+  and label ilike '%cyber%';
+
 insert into public.event_slots (start_time, end_time, capacity, label)
-values ('00:00', '23:59', 500, 'Cyber Puntacaribe · lunes 5 de octubre')
+values
+  ('12:00', '15:00', 70, 'Cyber · Bloque 1 · 12:00 a 15:00'),
+  ('15:00', '18:00', 70, 'Cyber · Bloque 2 · 15:00 a 18:00')
 on conflict (start_time, end_time) do update
 set capacity = excluded.capacity,
     label = excluded.label;

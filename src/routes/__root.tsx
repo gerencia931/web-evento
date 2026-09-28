@@ -94,14 +94,13 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       {
         name: "description",
         content:
-          "Cyber de viajes Puntacaribe. Programas todo incluido al Caribe, cruceros, Brasil, Europa, Japón y viajes grupales.",
+          "Evento presencial Cyber Puntacaribe del sábado 3 de octubre en Hotel Olá Santiago Providencia.",
       },
       { name: "author", content: "Puntacaribe" },
       { property: "og:title", content: "Cyber Puntacaribe" },
       {
         property: "og:description",
-        content:
-          "Cyber de viajes Puntacaribe. Inscríbete para recibir ofertas y asesoría personalizada.",
+        content: "Reserva tu entrada al evento Cyber Puntacaribe y elige tu horario.",
       },
 
       { property: "og:type", content: "website" },

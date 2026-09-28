@@ -310,7 +310,7 @@ function AdminPage() {
             campaignSlots.map((slot) => (
               <div key={slot.id} className="rounded-xl border border-border bg-card p-5">
                 <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                  {campaign === "cyber" ? "Campaña" : "Horario"}
+                  Horario
                 </p>
                 <h2 className="mt-1 text-lg font-bold text-foreground">{slot.label}</h2>
                 <div className="mt-4 grid grid-cols-3 gap-3">
