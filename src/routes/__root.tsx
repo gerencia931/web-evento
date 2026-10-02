@@ -94,13 +94,13 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       {
         name: "description",
         content:
-          "Evento presencial Cyber Puntacaribe del sábado 3 de octubre en Hotel Olá Santiago Providencia.",
+          "Ofertas Cyber de viajes Puntacaribe con atención online y asesoría personalizada.",
       },
       { name: "author", content: "Puntacaribe" },
       { property: "og:title", content: "Cyber Puntacaribe" },
       {
         property: "og:description",
-        content: "Reserva tu entrada al evento Cyber Puntacaribe y elige tu horario.",
+        content: "Regístrate para recibir ofertas Cyber y encontrar tu próximo viaje.",
       },
 
       { property: "og:type", content: "website" },

@@ -203,7 +203,7 @@ function AdminPage() {
         r.email,
         r.phone ?? "",
         CAMPAIGN_LABEL[r.campaign],
-        r.slot_label,
+        r.campaign === "cyber" ? "Formulario online" : r.slot_label,
         r.interests.join(" | "),
         r.influencer ?? "Ninguno",
         STATUS_LABEL[r.status],
@@ -301,40 +301,42 @@ function AdminPage() {
           ))}
         </div>
 
-        <div className="mt-4 grid gap-3 md:grid-cols-2">
-          {slotsQuery.isLoading ? (
-            <div className="rounded-xl border border-border bg-card p-5 text-sm text-muted-foreground md:col-span-2">
-              Cargando cupos de campaña…
-            </div>
-          ) : (
-            campaignSlots.map((slot) => (
-              <div key={slot.id} className="rounded-xl border border-border bg-card p-5">
-                <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                  Horario
-                </p>
-                <h2 className="mt-1 text-lg font-bold text-foreground">{slot.label}</h2>
-                <div className="mt-4 grid grid-cols-3 gap-3">
-                  <div>
-                    <p className="text-xs uppercase tracking-wide text-muted-foreground">Cupos</p>
-                    <p className="text-2xl font-bold text-foreground">{slot.capacity}</p>
-                  </div>
-                  <div>
-                    <p className="text-xs uppercase tracking-wide text-muted-foreground">
-                      Inscritos
-                    </p>
-                    <p className="text-2xl font-bold text-foreground">{slot.registered}</p>
-                  </div>
-                  <div>
-                    <p className="text-xs uppercase tracking-wide text-muted-foreground">
-                      Disponibles
-                    </p>
-                    <p className="text-2xl font-bold text-primary">{slot.available}</p>
+        {campaign === "sale" && (
+          <div className="mt-4 grid gap-3 md:grid-cols-2">
+            {slotsQuery.isLoading ? (
+              <div className="rounded-xl border border-border bg-card p-5 text-sm text-muted-foreground md:col-span-2">
+                Cargando cupos de campaña…
+              </div>
+            ) : (
+              campaignSlots.map((slot) => (
+                <div key={slot.id} className="rounded-xl border border-border bg-card p-5">
+                  <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                    Horario
+                  </p>
+                  <h2 className="mt-1 text-lg font-bold text-foreground">{slot.label}</h2>
+                  <div className="mt-4 grid grid-cols-3 gap-3">
+                    <div>
+                      <p className="text-xs uppercase tracking-wide text-muted-foreground">Cupos</p>
+                      <p className="text-2xl font-bold text-foreground">{slot.capacity}</p>
+                    </div>
+                    <div>
+                      <p className="text-xs uppercase tracking-wide text-muted-foreground">
+                        Inscritos
+                      </p>
+                      <p className="text-2xl font-bold text-foreground">{slot.registered}</p>
+                    </div>
+                    <div>
+                      <p className="text-xs uppercase tracking-wide text-muted-foreground">
+                        Disponibles
+                      </p>
+                      <p className="text-2xl font-bold text-primary">{slot.available}</p>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))
-          )}
-        </div>
+              ))
+            )}
+          </div>
+        )}
 
         <div className="mt-6 flex flex-wrap gap-3">
           <Input
@@ -396,7 +398,9 @@ function AdminPage() {
                         ) : null}
                       </TableCell>
                       <TableCell>
-                        <Badge variant="secondary">{r.slot_label}</Badge>
+                        <Badge variant="secondary">
+                          {r.campaign === "cyber" ? "Formulario online" : r.slot_label}
+                        </Badge>
                       </TableCell>
                       <TableCell>
                         {r.interests.length ? (

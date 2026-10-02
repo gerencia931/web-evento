@@ -96,7 +96,7 @@ export const getSlots = createServerFn({ method: "GET" }).handler(async () => {
   return data.map((slot): Slot => slotSchema.parse(slot));
 });
 
-export const getCyberSlots = createServerFn({ method: "GET" }).handler(async () => {
+export const getCyberSlot = createServerFn({ method: "GET" }).handler(async () => {
   const { supabasePublicServer } = await import("@/integrations/supabase/client-public.server");
 
   const { data, error } = await supabasePublicServer.rpc("get_event_slots_with_counts");
@@ -106,7 +106,10 @@ export const getCyberSlots = createServerFn({ method: "GET" }).handler(async () 
   }
 
   const slots = data.map((slot): Slot => slotSchema.parse(slot));
-  return slots.filter((slot) => slot.label.toLowerCase().includes("cyber"));
+  const cyberSlots = slots.filter((slot) => slot.label.toLowerCase().includes("cyber"));
+  return (
+    cyberSlots.find((slot) => slot.label.toLowerCase() === "cyber online") ?? cyberSlots[0] ?? null
+  );
 });
 
 export const registerForSlot = createServerFn({ method: "POST" })
